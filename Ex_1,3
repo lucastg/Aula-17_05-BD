@@ -1,0 +1,45 @@
+create table FUNCIONARIO(
+matricula int primary key,
+nome varchar(20),
+salario int not null,
+departamento varchar(20),
+cargo varchar(20)
+)
+
+go
+create procedure insercao
+@matricula int, @nome varchar(20), @salario int, @departamento varchar(20), @cargo varchar(20)
+as
+insert FUNCIONARIO values (@matricula, @nome, @salario, @departamento, @cargo)
+exec insercao @matricula='1', @nome='Jubileu', @salario=15000, @departamento ='RH', @cargo='Estagiario'
+
+
+go
+create procedure ex_2
+@matricula int, @nome varchar(20), @salario int, @departamento varchar(20), @cargo varchar(20)
+as
+if exists (select matricula from FUNCIONARIO where matricula = @matricula)
+begin
+update FUNCIONARIO set nome = @nome, salario = @salario, departamento = @departamento, cargo = @cargo
+where matricula = @matricula
+print 'FUNCIONARIO ALTERADO!'
+end 
+else
+begin
+exec insercao @matricula, @nome, @salario, @departamento, @cargo
+end
+exec ex_2 3,'Lucas','30000','TI', 'Analista'
+select * from FUNCIONARIO
+
+go 
+create procedure ex_3
+@matricula int, @nome varchar(20), @salario float, @departamento varchar(20), @cargo varchar(20)
+as
+if (@cargo = 'gerente')
+begin
+set @salario=@salario * 1.1
+end
+exec insercao @matricula, @nome, @salario, @departamento, @cargo
+
+exec ex_3 4, 'Felipe', '50000', 'TI', 'Gerente'
+select * from FUNCIONARIO
