@@ -13,7 +13,7 @@ as
 insert FUNCIONARIO values (@matricula, @nome, @salario, @departamento, @cargo)
 exec insercao @matricula='1', @nome='Jubileu', @salario=15000, @departamento ='RH', @cargo='Estagiario'
 
-
+---------------------------------------------------------------------------------
 go
 create procedure ex_2
 @matricula int, @nome varchar(20), @salario int, @departamento varchar(20), @cargo varchar(20)
@@ -30,7 +30,7 @@ exec insercao @matricula, @nome, @salario, @departamento, @cargo
 end
 exec ex_2 3,'Lucas','30000','TI', 'Analista'
 select * from FUNCIONARIO
-
+------------------------------------------------------------------------------------
 go 
 create procedure ex_3
 @matricula int, @nome varchar(20), @salario float, @departamento varchar(20), @cargo varchar(20)
@@ -43,3 +43,46 @@ exec insercao @matricula, @nome, @salario, @departamento, @cargo
 
 exec ex_3 4, 'Felipe', '50000', 'TI', 'Gerente'
 select * from FUNCIONARIO
+
+-----------------------------------------------------------------------------------
+
+create table produto(
+codigo int,
+nome varchar(20),
+quantidade int,
+valor int,
+primary key(codigo)
+)
+
+create table nt_fiscal(
+numero int,
+quantidade int,
+data date,
+primary key (numero),
+codigoPD int,
+codigoCL int,
+foreign key(codigoPD) references produto(codigo),
+foreign key(codigoCL) references cliente(codigo)
+)
+
+create table cliente(
+codigo int, 
+nome varchar (20),
+primary key (codigo)
+)
+
+go
+create procedure ex_4
+@codigo int, @nome varchar(20), @quantidade int, @valor int
+as
+if exists (select codigo from produto where codigo=@codigo)
+begin
+	update produto set quantidade=@quantidade where codigo=@codigo
+end
+else
+begin
+	insert produto values (@codigo,@nome,@quantidade,@valor)
+end
+
+exec ex_4 1, Jubileu, 14, 123
+select * from produto
